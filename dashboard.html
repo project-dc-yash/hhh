@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Helmet - Single View</title>
+    <style>
+        /* CSS STYLING */
+        :root {
+            --dark: #1a1a2e;
+            --blue: #0f3460;
+            --accent: #e94560;
+            --green: #00f5d4;
+            --text: #ffffff;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--blue);
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 90%;
+            max-width: 1100px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: var(--blue);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #aaa;
+            text-transform: uppercase;
+        }
+
+        .reading {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .unit {
+            font-size: 1rem;
+            color: var(--green);
+        }
+
+        /* Status Indicators */
+        .status-dot {
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .safe { background-color: var(--green); box-shadow: 0 0 10px var(--green); }
+        .alert { background-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
+
+        .label {
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.2);
+            padding: 5px 15px;
+            border-radius: 50px;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SMART HELMET LIVE PORTAL</h1>
+        <p id="clock">Syncing System Time...</p>
+    </header>
+
+    <div class="dashboard">
+        
+        <div class="card">
+            <h2>Environment (DHT11)</h2>
+            <div class="reading" id="tempText">24<span class="unit">°C</span></div>
+            <div class="reading" id="humText">45<span class="unit">% RH</span></div>
+            <div class="label">Temperature & Humidity</div>
+        </div>
+
+        <div class="card">
+            <h2>Gas Sensor (MQ)</h2>
+            <div class="reading" id="gasValue">142</div>
+            <div id="gasStatusBox">
+                <span class="status-dot safe" id="gasDot"></span>
+                <span id="gasText">Air Quality: Good</span>
+            </div>
+            <div class="label" style="margin-top:20px;">PPM Levels</div>
+        </div>
+
+        <div class="card">
+            <h2>Proximity (IR)</h2>
+            <div class="reading" id="irIcon">🛡️</div>
+            <div id="irStatusBox">
+                <span class="status-dot safe" id="irDot"></span>
+                <span id="irText">Path Clear</span>
+            </div>
+            <div class="label" style="margin-top:20px;">Obstacle Detection</div>
+        </div>
+
+    </div>
+
+    <footer>
+        System Operational | Sensors Active: IR, MQ-Gas, DHT11
+    </footer>
+
+    <script>
+        // JAVASCRIPT LOGIC
+        function updateData() {
+            // 1. Simulate Clock
+            const now = new Date();
+            document.getElementById('clock').innerText = "System Time: " + now.toLocaleTimeString();
+
+            // 2. Simulate DHT11 Data
+            let temp = (22 + Math.random() * 5).toFixed(1);
+            let hum = (40 + Math.random() * 10).toFixed(1);
+            document.getElementById('tempText').innerHTML = temp + '<span class="unit">°C</span>';
+            document.getElementById('humText').innerHTML = hum + '<span class="unit">% RH</span>';
+
+            // 3. Simulate Gas Sensor (MQ)
+            let gas = Math.floor(Math.random() * 600);
+            document.getElementById('gasValue').innerText = gas;
+            
+            const gasText = document.getElementById('gasText');
+            const gasDot = document.getElementById('gasDot');
+            
+            if(gas > 400) {
+                gasText.innerText = "Gas Detected! Danger";
+                gasDot.className = "status-dot alert";
+            } else {
+                gasText.innerText = "Air Quality: Good";
+                gasDot.className = "status-dot safe";
+            }
+
+            // 4. Simulate IR Sensor
+            let obstacle = Math.random() > 0.7; // 30% chance of obstacle
+            const irText = document.getElementById('irText');
+            const irDot = document.getElementById('irDot');
+            const irIcon = document.getElementById('irIcon');
+
+            if(obstacle) {
+                irText.innerText = "Obstacle Detected!";
+                irDot.className = "status-dot alert";
+                irIcon.innerText = "⚠️";
+            } else {
+                irText.innerText = "Path Clear";
+                irDot.className = "status-dot safe";
+                irIcon.innerText = "🛡️";
+            }
+        }
+
+        // Update every 2 seconds
+        setInterval(updateData, 2000);
+        updateData(); // Initial call
+    </script>
+
+</body>
+</html>
